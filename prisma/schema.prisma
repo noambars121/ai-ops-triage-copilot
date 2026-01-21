@@ -1,0 +1,117 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Ticket {
+  id              String   @id @default(uuid())
+  customer_email  String
+  customer_name   String
+  subject         String
+  product_area    String
+  // Status: new, needs_approval, replied, waiting_on_customer, escalated, closed, failed
+  status          String   @default("new") 
+  
+  // AI Analysis Fields
+  ai_summary           String?
+  ai_category          String?
+  ai_urgency           String?
+  ai_suggested_reply   String?
+  ai_follow_up_questions String? // JSON string
+  ai_confidence        Float?
+  ai_token_usage       String? @default("unknown")
+
+  created_at      DateTime @default(now())
+  updated_at      DateTime @updatedAt
+
+  messages        TicketMessage[]
+  run_logs        RunLog[]
+  audit_events    AuditEvent[]
+  kb_matches      TicketKBMatch[]
+
+  @@index([status])
+  @@index([created_at])
+  @@index([ai_urgency])
+  @@index([ai_category])
+}
+
+model TicketMessage {
+  id              String   @id @default(uuid())
+  ticket_id       String
+  sender_type     String   // "customer" or "agent"
+  message_body    String
+  attachments     String?  // Optional URL
+  fingerprint     String?  // normalized text hash for dedupe
+  created_at      DateTime @default(now())
+
+  ticket          Ticket   @relation(fields: [ticket_id], references: [id])
+  
+  @@index([fingerprint])
+}
+
+model KBDocument {
+  id          String   @id @default(uuid())
+  title       String
+  body        String
+  tags        String?  // Comma separated tags
+  created_at  DateTime @default(now())
+  updated_at  DateTime @updatedAt
+
+  matches     TicketKBMatch[]
+}
+
+model TicketKBMatch {
+  id              String   @id @default(uuid())
+  ticket_id       String
+  kb_document_id  String
+  score           Float
+  title_snapshot  String   // Snapshot in case doc changes
+  excerpt_snapshot String
+
+  ticket          Ticket     @relation(fields: [ticket_id], references: [id])
+  kb_document     KBDocument @relation(fields: [kb_document_id], references: [id])
+}
+
+model RunLog {
+  id              String   @id @default(uuid())
+  ticket_id       String?
+  step            String   // "triage", "rag_search", "approval", "email_send"
+  status          String   // "success", "failed"
+  started_at      DateTime @default(now())
+  finished_at     DateTime?
+  latency_ms      Int?
+  error_code      String?
+  error_message   String?
+  payload_preview String?  // Redacted, max 200 chars
+
+  ticket          Ticket?  @relation(fields: [ticket_id], references: [id])
+}
+
+model AuditEvent {
+  id          String   @id @default(uuid())
+  ticket_id   String
+  action      String   // "approve", "edit", "escalate", "reply", "ask_info"
+  actor       String?  // "system", "admin_email"
+  timestamp   DateTime @default(now())
+  details     String?
+
+  ticket      Ticket   @relation(fields: [ticket_id], references: [id])
+}
+
+model EmailOutbox {
+  id          String   @id @default(uuid())
+  to          String
+  subject     String
+  body        String
+  status      String   @default("pending") // pending, sent, failed
+  sent_at     DateTime?
+  error       String?
+  created_at  DateTime @default(now())
+}
