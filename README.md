@@ -9,7 +9,7 @@
 
 An AI-powered support operations platform designed for high-volume ticket triage, automated drafting, and operational efficiency.
 ## tutorial (45s)
-![tutorial](public/tutorial.gif)
+![demo](public/demo.gif)
 
 ## 🚀 What It Does
 
