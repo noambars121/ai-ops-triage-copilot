@@ -8,8 +8,8 @@
 ![Observability](https://img.shields.io/badge/Observability-Logs%20%2B%20Retries-success)
 
 An AI-powered support operations platform designed for high-volume ticket triage, automated drafting, and operational efficiency.
-## Demo (45s)
-![Demo](public/tutorial.gif)
+## tutorial (45s)
+![tutorial](public/tutorial.gif)
 
 ## 🚀 What It Does
 
