@@ -1,6 +1,15 @@
 # Support Triage Copilot (Enterprise Edition)
+![Next.js](https://img.shields.io/badge/Next.js-14-black)
+![TypeScript](https://img.shields.io/badge/TypeScript-blue)
+![Prisma](https://img.shields.io/badge/Prisma-ORM-2D3748)
+![SQLite](https://img.shields.io/badge/DB-SQLite-003B57)
+![Gemini](https://img.shields.io/badge/LLM-Gemini%202.0%20Flash-4285F4)
+![RAG](https://img.shields.io/badge/RAG-KB%20Retrieval-orange)
+![Observability](https://img.shields.io/badge/Observability-Logs%20%2B%20Retries-success)
 
 An AI-powered support operations platform designed for high-volume ticket triage, automated drafting, and operational efficiency.
+## Demo (30s)
+![demo](public/demo.gif)
 
 ## 🚀 What It Does
 
